@@ -1,37 +1,54 @@
 import { Link } from 'react-router-dom';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function Sidebar({ activeTab, setActiveTab }) {
     const menuItems = [
-        { id: 'products', name: 'Quản lý Sản phẩm', link: '/product-management' },
-        { id: 'bills', name: 'Quản lý Hóa đơn', link: '/bill-management' },
+        {
+            id: 'products',
+            name: 'Quản lý sản phẩm',
+            icon: <i className="fa-solid fa-bag-shopping"></i>,
+            link: '/product-management',
+        },
+        {
+            id: 'bills',
+            name: 'Quản lý hóa đơn',
+            icon: <i className="fa-solid fa-receipt"></i>,
+            link: '/bill-management',
+        },
     ];
 
     return (
-        <aside className="w-64 bg-red-500 text-white flex flex-col h-screen shadow-xl sticky top-0">
-            <div className="p-6 text-2xl font-bold border-b border-red-500 text-center">MY ADMIN</div>
+        <div className="w-25 bg-red-500 text-white h-screen flex flex-col items-center">
+            <div className="pt-8 text-[22px] border-red-500 text-center">ADMIN</div>
 
-            <nav className="flex-1 mt-6 px-4 space-y-2">
+            <div className="mt-6 mr-1">
                 {menuItems.map((item) => (
-                    <Link to>
+                    <Link to={item.link} key={item.id} className="relative group flex justify-center">
                         <button
-                            key={item.id}
                             onClick={() => setActiveTab(item.id)}
-                            className={`w-full flex items-center justify-between p-3 rounded-lg transition-all duration-200 ${
+                            className={`px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer flex items-center justify-center ${
                                 activeTab === item.id
-                                    ? 'bg-white text-red-600 shadow-md transform scale-105 font-bold'
+                                    ? 'bg-white text-red-500 shadow-md transform scale-110'
                                     : 'hover:bg-red-700 text-white opacity-80 hover:opacity-100'
                             }`}
                         >
-                            <div className="flex items-center gap-3">
-                                <span>{item.name}</span>
-                            </div>
+                            <div className="text-[36px]">{item.icon}</div>
                         </button>
+
+                        {/* Tooltip hiện tên khi hover */}
+                        <span
+                            className="absolute left-full ml-4 mt-4 px-2 py-2 bg-gray-500 text-white text-[14px] rounded-md 
+                            whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 
+                            pointer-events-none z-50 shadow-lg"
+                        >
+                            {item.name}
+                            {/* Mũi tên nhỏ cho tooltip */}
+                            <div className="absolute top-1/2 -left-4 -translate-y-1/2 border-8 border-transparent border-r-gray-500"></div>
+                        </span>
                     </Link>
                 ))}
-            </nav>
-
-            <div className="p-4 border-t border-red-500 text-xs text-center opacity-60">v1.0.0 Powered by React</div>
-        </aside>
+            </div>
+        </div>
     );
 }
 
