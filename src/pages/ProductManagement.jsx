@@ -2,9 +2,8 @@ import Sidebar from '../components/Sidebar';
 
 function ProductManagement() {
     return (
-        <div>
+        <div className="flex">
             <Sidebar activeTab="product" />
-            <div></div>
         </div>
     );
 }
