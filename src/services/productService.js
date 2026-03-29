@@ -2,8 +2,8 @@ import apiClient from '../api/productApi';
 
 const ProductService = {
     getAllProduct() {
-        const url = '/showProductUser';
-        return apiClient.get(url);
+        const url = '/getProductAdmin';
+        return apiClient.post(url);
     },
 };
 

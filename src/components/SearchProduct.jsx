@@ -42,8 +42,7 @@ function SearchProduct() {
     };
 
     return (
-        <div className="flex">
-            <Sidebar activeTab="product" />
+        <div className="flex justify-center mt-10 mb-10">
             <div>
                 <div>
                     <div className="mx-20 w-150 flex flex-col justify-center relative">

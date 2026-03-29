@@ -22,7 +22,7 @@ function ProductList({ filterType, name = '' }) {
 
     return (
         <div className="flex flex-col items-center w-full">
-            <div className="grid grid-cols-6 px-[130px] w-full">
+            <div className="grid grid-cols-5 gap-3 px-[100px] w-full">
                 {displayProducts && displayProducts.length > 0 ? (
                     displayProducts.map((product) => (
                         <ProductCard
