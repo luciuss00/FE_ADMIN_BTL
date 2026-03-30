@@ -28,8 +28,12 @@ export const ProductProvider = ({ children }) => {
         }
     };
 
+    const deleteProductFromState = (id) => {
+        setProducts((prevProducts) => prevProducts.filter((p) => p.id !== id));
+    };
+
     return (
-        <ProductContext.Provider value={{ products, fetchProductsOnce, refreshProduct }}>
+        <ProductContext.Provider value={{ products, fetchProductsOnce, refreshProduct, deleteProductFromState }}>
             {children}
         </ProductContext.Provider>
     );

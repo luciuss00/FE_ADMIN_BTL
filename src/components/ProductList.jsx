@@ -1,12 +1,24 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useProducts } from '../context/ProductContext';
+import ProductService from '../services/productService';
 import ProductCard from './ProductCard';
+import Notification from './Notification';
 
 function ProductList({ filterType, name = '' }) {
-    const { products, fetchProductsOnce } = useProducts();
-    const [visibleCount, setVisibleCount] = useState(12);
+    const { products, fetchProductsOnce, deleteProductFromState } = useProducts();
+    const [visibleCount, setVisibleCount] = useState('12');
     const [searchParams] = useSearchParams();
+
+    const [notification, setNotification] = useState({
+        isOpen: false,
+        message: '',
+        check: false,
+    });
+
+    const closeNotification = () => {
+        setNotification({ ...notification, isOpen: false });
+    };
 
     useEffect(() => {
         fetchProductsOnce();
@@ -48,15 +60,35 @@ function ProductList({ filterType, name = '' }) {
 
     const handleLoadMore = () => setVisibleCount((prev) => prev + 12);
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
+        if (!id) return;
+
         if (window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
-            console.log('Xóa sản phẩm ID:', id);
-            // Gọi hàm xóa từ context ở đây nếu có, ví dụ: deleteProduct(id);
+            try {
+                await ProductService.deleteProduct(id);
+                deleteProductFromState(id);
+
+                // Thông báo thành công (check = true)
+                setNotification({
+                    isOpen: true,
+                    message: 'Xóa sản phẩm thành công!',
+                    check: true,
+                });
+            } catch (error) {
+                console.error('Lỗi khi xóa:', error);
+
+                // Thông báo thất bại (check = false)
+                setNotification({
+                    isOpen: true,
+                    message: 'Xóa thất bại. Vui lòng thử lại sau.',
+                    check: false,
+                });
+            }
         }
     };
 
     return (
-        <div className="w-250 ml-10 mr-30 py-6 ">
+        <div className="w-240 ml-10 mr-30 py-6 ">
             <div className="overflow-x-auto bg-white rounded-lg shadow">
                 <table className="w-full text-left border-collapse">
                     <thead className="bg-gray-100 border-b-2 border-gray-200">
@@ -70,9 +102,9 @@ function ProductList({ filterType, name = '' }) {
                     </thead>
                     <tbody>
                         {displayProducts.length > 0 ? (
-                            displayProducts.map((product, index) => (
+                            displayProducts.map((product) => (
                                 <ProductCard
-                                    key={index}
+                                    key={product.id}
                                     id={product.id}
                                     name={product.nameProduct}
                                     description={product.descriptionProduct}
@@ -104,6 +136,12 @@ function ProductList({ filterType, name = '' }) {
                     </button>
                 </div>
             )}
+            <Notification
+                isOpen={notification.isOpen}
+                message={notification.message}
+                check={notification.check}
+                onClose={closeNotification}
+            />
         </div>
     );
 }

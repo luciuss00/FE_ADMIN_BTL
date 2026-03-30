@@ -1,8 +1,14 @@
 import { Link } from 'react-router-dom';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
-function Sidebar({ activeTab }) {
+function SidebarAdmin({ activeTab }) {
     const menuItems = [
+        {
+            id: 'user',
+            name: 'Quản lý người dùng',
+            icon: <i className="fa-solid fa-user"></i>,
+            link: '/user-management',
+        },
         {
             id: 'product',
             name: 'Quản lý sản phẩm',
@@ -19,7 +25,7 @@ function Sidebar({ activeTab }) {
 
     return (
         <div className="w-20 bg-red-500 text-white min-h-screen flex flex-col items-center">
-            <div className="mt-25 mr-1">
+            <div className="mt-10 mr-1">
                 {menuItems.map((item) => (
                     <Link to={item.link} key={item.id} className="relative group flex justify-center">
                         <button
@@ -47,4 +53,4 @@ function Sidebar({ activeTab }) {
     );
 }
 
-export default Sidebar;
+export default SidebarAdmin;
