@@ -18,7 +18,7 @@ function Sidebar({ activeTab }) {
     ];
 
     return (
-        <div className="w-25 bg-red-500 text-white h-screen flex flex-col items-center">
+        <div className="w-20 bg-red-500 text-white min-h-screen flex flex-col items-center">
             <Link to="/home" className="pt-8 text-[22px] border-red-500 text-center">
                 ADMIN
             </Link>
