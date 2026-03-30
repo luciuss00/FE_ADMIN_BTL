@@ -19,11 +19,7 @@ function Sidebar({ activeTab }) {
 
     return (
         <div className="w-20 bg-red-500 text-white min-h-screen flex flex-col items-center">
-            <Link to="/home" className="pt-8 text-[22px] border-red-500 text-center">
-                ADMIN
-            </Link>
-
-            <div className="mt-5 mr-1">
+            <div className="mt-25 mr-1">
                 {menuItems.map((item) => (
                     <Link to={item.link} key={item.id} className="relative group flex justify-center">
                         <button

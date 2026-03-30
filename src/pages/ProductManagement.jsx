@@ -1,5 +1,5 @@
+import Header from '../components/Header';
 import Sidebar from '../components/Sidebar/SidebarAdmin';
-import SearchProduct from '../components/SearchProduct';
 import ProductList from '../components/ProductList';
 import SidebarProduct from '../components/Sidebar/SidebarProduct';
 function ProductManagement() {
@@ -7,9 +7,9 @@ function ProductManagement() {
         <div className="flex">
             <Sidebar activeTab="product" />
             <div>
-                <SearchProduct />
+                <Header />
 
-                <div>
+                <div className="mt-10">
                     <h2 className="text-center text-[40px] text-red-500">Quản lý sản phẩm </h2>
 
                     <div className="flex">
