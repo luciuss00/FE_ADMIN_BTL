@@ -89,6 +89,15 @@ function ProductList({ filterType, name = '' }) {
 
     return (
         <div className="w-240 ml-10 mr-30 py-6 ">
+            <div className="flex justify-end mb-4">
+                <Link
+                    to="/add-product"
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium flex items-center gap-2 transition-all shadow-md"
+                >
+                    <i className="fa-solid fa-plus"></i>
+                    Thêm sản phẩm
+                </Link>
+            </div>
             <div className="overflow-x-auto bg-white rounded-lg shadow">
                 <table className="w-full text-left border-collapse">
                     <thead className="bg-gray-100 border-b-2 border-gray-200">

@@ -4,6 +4,8 @@ import SignIn from './pages/Signin';
 import UserManagement from './pages/UserManagement';
 import ProductManagement from './pages/ProductManagement';
 import BillManagement from './pages/BillManagement';
+import ProductDetail from './pages/ProductDetail';
+import AddProduct from './pages/AddProduct';
 
 import { ProductProvider } from './context/ProductContext';
 function App() {
@@ -17,6 +19,8 @@ function App() {
                         <Route path="/user-management" element={<UserManagement />} />
                         <Route path="/product-management" element={<ProductManagement />} />
                         <Route path="/bill-management" element={<BillManagement />} />
+                        <Route path="/detail" element={<ProductDetail />} />
+                        <Route path="/add-product" element={<AddProduct />} />
                     </Routes>
                 </div>
             </Router>

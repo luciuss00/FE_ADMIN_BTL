@@ -1,10 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext'; //
-import { useProducts } from '../context/ProductContext';
+import { useLocation } from 'react-router-dom';
 import Header from '../components/Header';
-import CartService from '../services/cartService';
-import Footer from '../components/Footer';
 import Notification from '../components/Notification';
 
 function ProductDetail() {
@@ -15,6 +11,16 @@ function ProductDetail() {
     const [isExpanded, setIsExpanded] = useState(false);
 
     const [ratingData, setRatingData] = useState({ stars: 5, reviews: 0 });
+
+    const [notification, setNotification] = useState({
+        isOpen: false,
+        message: '',
+        check: false,
+    });
+
+    const closeNotification = () => {
+        setNotification({ ...notification, isOpen: false });
+    };
 
     useEffect(() => {
         if (product?.id) {
@@ -131,12 +137,12 @@ function ProductDetail() {
                     </div>
                 </div>
             </div>
-            <Footer />
+
             <Notification
-                isOpen={modalConfig.isOpen}
-                message={modalConfig.message}
-                onClose={closeModal}
-                check={modalConfig.isSuccess}
+                isOpen={notification.isOpen}
+                message={notification.message}
+                check={notification.check}
+                onClose={closeNotification}
             />
         </div>
     );
