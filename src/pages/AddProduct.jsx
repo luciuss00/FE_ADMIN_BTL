@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProductService from '../services/productService';
-import Notification from './Notification';
+import Notification from '../components/Notification';
+import Header from '../components/Header';
+import SidebarAdmin from '../components/Sidebar/SidebarAdmin';
 
 const AddProduct = () => {
     const navigate = useNavigate();
