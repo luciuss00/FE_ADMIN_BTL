@@ -15,6 +15,11 @@ const ProductService = {
             },
         });
     },
+
+    addProduct(productData) {
+        const url = '/deleteProductById';
+        return apiClient.post(url, productData);
+    },
 };
 
 export default ProductService;

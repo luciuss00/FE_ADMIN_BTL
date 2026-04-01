@@ -7,7 +7,7 @@ function BillManagement() {
             <Header />
 
             <div className="flex">
-                <SidebarAdmin />
+                <SidebarAdmin activeTab="bill" />
                 <div></div>
             </div>
         </div>

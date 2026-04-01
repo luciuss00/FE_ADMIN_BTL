@@ -31,7 +31,7 @@ function ProductCard({ id, name, description, type, cost, quantity, img, onDelet
                         e.stopPropagation(); // Ngăn sự kiện click hàng
                         onDelete(id);
                     }}
-                    className="text-gray-400 hover:text-red-600 p-2 transition-colors cursor-pointer"
+                    className=" text-gray-400 hover:text-red-600 hover:underline p-2 transition-colors cursor-pointer"
                 >
                     Xóa
                 </button>

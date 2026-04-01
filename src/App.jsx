@@ -8,23 +8,26 @@ import ProductDetail from './pages/ProductDetail';
 import AddProduct from './pages/AddProduct';
 
 import { ProductProvider } from './context/ProductContext';
+import { UserProvider } from './context/UserContext';
 function App() {
     return (
-        <ProductProvider>
-            <Router>
-                <div className="App">
-                    <Routes>
-                        <Route path="/" element={<SignIn />} />
-                        <Route path="/home" element={<Home />} />
-                        <Route path="/user-management" element={<UserManagement />} />
-                        <Route path="/product-management" element={<ProductManagement />} />
-                        <Route path="/bill-management" element={<BillManagement />} />
-                        <Route path="/detail" element={<ProductDetail />} />
-                        <Route path="/add-product" element={<AddProduct />} />
-                    </Routes>
-                </div>
-            </Router>
-        </ProductProvider>
+        <UserProvider>
+            <ProductProvider>
+                <Router>
+                    <div className="App">
+                        <Routes>
+                            <Route path="/" element={<SignIn />} />
+                            <Route path="/home" element={<Home />} />
+                            <Route path="/user-management" element={<UserManagement />} />
+                            <Route path="/product-management" element={<ProductManagement />} />
+                            <Route path="/bill-management" element={<BillManagement />} />
+                            <Route path="/detail" element={<ProductDetail />} />
+                            <Route path="/add-product" element={<AddProduct />} />
+                        </Routes>
+                    </div>
+                </Router>
+            </ProductProvider>
+        </UserProvider>
     );
 }
 

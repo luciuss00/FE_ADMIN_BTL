@@ -24,7 +24,7 @@ function SidebarAdmin({ activeTab }) {
     ];
 
     return (
-        <div className="w-20 bg-red-500 text-white min-h-screen flex flex-col items-center">
+        <div className="w-18 bg-red-500 text-white min-h-screen flex flex-col items-center">
             <div className="mt-10 mr-1">
                 {menuItems.map((item) => (
                     <Link to={item.link} key={item.id} className="relative group flex justify-center">
@@ -33,7 +33,7 @@ function SidebarAdmin({ activeTab }) {
                                 activeTab === item.id && 'bg-white text-red-500 shadow-md'
                             }`}
                         >
-                            <div className="text-[34px]">{item.icon}</div>
+                            <div className="text-[30px]">{item.icon}</div>
                         </button>
 
                         {/* Tooltip hiện tên khi hover */}

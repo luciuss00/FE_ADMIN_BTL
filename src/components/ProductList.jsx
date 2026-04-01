@@ -7,7 +7,9 @@ import Notification from './Notification';
 
 function ProductList({ filterType, name = '' }) {
     const { products, fetchProductsOnce, deleteProductFromState } = useProducts();
-    const [visibleCount, setVisibleCount] = useState('12');
+    console.log(products);
+
+    const [visibleCount, setVisibleCount] = useState(12);
     const [searchParams] = useSearchParams();
 
     const [notification, setNotification] = useState({
@@ -32,21 +34,27 @@ function ProductList({ filterType, name = '' }) {
                 : products
             : products.filter((p) => p.nameProduct.toLowerCase().includes(name.toLowerCase()));
 
+    const subCategory = searchParams.get('subCategory');
+
+    const selectedCat = searchParams.get('category');
+    const priceSort = searchParams.get('priceSort');
+    const stockSort = searchParams.get('stockSort');
+
     let filtered = products.filter((p) => {
-        const matchCategory = filterType ? p.categoryProduct === filterType : true;
+        // Lọc theo search name (nếu có)
         const matchName = name === '' ? true : p.nameProduct.toLowerCase().includes(name.toLowerCase());
-        return matchCategory && matchName;
+
+        // Lọc theo Category từ SideBar (URL)
+        const matchCategory = selectedCat ? p.categoryProduct === selectedCat : true;
+
+        return matchName && matchCategory;
     });
 
-    const subCategory = searchParams.get('subCategory');
     if (subCategory) {
         // Giả sử field subCategory trong data của bạn tên là 'type' hoặc 'description'
         // Bạn hãy đổi 'p.descriptionProduct' thành field chứa loại chi tiết của bạn nhé
         filtered = filtered.filter((p) => p.descriptionProduct === subCategory);
     }
-
-    const priceSort = searchParams.get('priceSort');
-    const stockSort = searchParams.get('stockSort');
 
     if (priceSort) {
         filtered.sort((a, b) =>

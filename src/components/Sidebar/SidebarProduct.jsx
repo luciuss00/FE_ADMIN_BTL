@@ -103,7 +103,7 @@ function SideBar() {
                                 type="checkbox"
                                 checked={selectedCat === cat}
                                 onChange={() => updateParams('category', cat)}
-                                className="w-4 h-4 accent-red-500 rounded border-gray-300"
+                                className="cursor-pointer w-4 h-4 accent-red-500 rounded border-gray-300"
                             />
                             <span
                                 className={`transition-colors ${selectedCat === cat ? 'text-red-600 font-bold' : 'text-gray-600 group-hover:text-black'}`}

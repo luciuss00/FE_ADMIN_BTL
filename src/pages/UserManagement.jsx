@@ -40,7 +40,7 @@ const UserManagement = () => {
         <div className="bg-gray-50 min-h-screen">
             <Header />
             <div className="flex">
-                <SidebarAdmin />
+                <SidebarAdmin activeTab="user" />
                 <div className="flex-1 p-8">
                     {' '}
                     {/* Thêm padding và flex-1 để layout đẹp hơn */}
