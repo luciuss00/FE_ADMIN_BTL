@@ -98,7 +98,7 @@ const AddProduct = () => {
         <div>
             <Header />
             <div className="flex">
-                <SidebarAdmin />
+                <SidebarAdmin activeTab="product" />
                 <div className="mx-auto mt-7 w-200">
                     <h2 className="text-2xl font-bold mb-6 text-gray-800">Thêm Sản Phẩm Mới</h2>
                     <form onSubmit={handleSubmit} className="space-y-4">

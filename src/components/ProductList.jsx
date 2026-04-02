@@ -7,7 +7,6 @@ import Notification from './Notification';
 
 function ProductList({ filterType, name = '' }) {
     const { products, fetchProductsOnce, deleteProductFromState } = useProducts();
-    console.log(products);
 
     const [visibleCount, setVisibleCount] = useState(12);
     const [searchParams] = useSearchParams();
@@ -128,6 +127,7 @@ function ProductList({ filterType, name = '' }) {
                                     name={product.nameProduct}
                                     description={product.descriptionProduct}
                                     type={product.categoryProduct}
+                                    subCategory={product.subCategoryProduct}
                                     cost={product.priceProduct}
                                     quantity={product.quantityProduct}
                                     img={product.imageLink}

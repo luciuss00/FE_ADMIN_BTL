@@ -1,111 +1,119 @@
-import React, { useState, useEffect } from 'react'; // Thêm useEffect
-import { Trash2, UserPlus } from 'lucide-react';
+import { useEffect } from 'react';
+import { Link } from 'react-router-dom'; // 1. Thêm import Link
+import { Trash2, UserPlus, Mail, User as UserIcon } from 'lucide-react';
 import Header from '../components/Header';
 import SidebarAdmin from '../components/Sidebar/SidebarAdmin';
-import ProductService from '../services/userService'; // Import service của bạn
+import { useUser } from '../context/UserContext';
 
 const UserManagement = () => {
-    // 1. Khởi tạo state là mảng rỗng
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { users, fetchUsers } = useUser();
 
-    // 2. Gọi API khi component mount
     useEffect(() => {
         fetchUsers();
-    }, []);
-
-    const fetchUsers = async () => {
-        try {
-            setLoading(true);
-            const response = await ProductService.getAllUser();
-            // Tùy vào cấu trúc backend trả về (thường là response.data hoặc response.data.data)
-            // Ở đây tôi giả định response trả về trực tiếp mảng user
-            setUsers(response.data || []);
-        } catch (error) {
-            console.error('Lỗi khi lấy danh sách người dùng:', error);
-            alert('Không thể tải dữ liệu người dùng!');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const deleteUser = (id) => {
-        if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
-            // Lưu ý: Thực tế bạn nên gọi API delete ở đây trước khi setUsers ở local
-            setUsers(users.filter((user) => user.id !== id));
-        }
-    };
+    }, [fetchUsers]);
 
     return (
         <div className="bg-gray-50 min-h-screen">
             <Header />
             <div className="flex">
                 <SidebarAdmin activeTab="user" />
-                <div className="flex-1 p-8">
-                    {' '}
-                    {/* Thêm padding và flex-1 để layout đẹp hơn */}
-                    <div className="max-w-6xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
-                        <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                            <h2 className="text-xl font-semibold text-gray-800">Quản lý người dùng</h2>
-                            <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition">
-                                <UserPlus size={18} /> Thêm người dùng
-                            </button>
+                <div className="flex-1 p-8 mt-8">
+                    <div className="max-w-7xl mx-auto bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
+                        <div className="px-6 py-5 border-b border-gray-200 flex justify-between items-center bg-white">
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-800">Quản lý người dùng</h2>
+                            </div>
                         </div>
 
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
                                 <thead>
-                                    <tr className="bg-gray-100 text-gray-700 uppercase text-sm">
-                                        <th className="px-6 py-3 font-medium">Họ tên</th>
-                                        <th className="px-6 py-3 font-medium">Giới tính</th>
-                                        <th className="px-6 py-3 font-medium">Số điện thoại</th>
-                                        <th className="px-6 py-3 font-medium">Email</th>
-                                        <th className="px-6 py-3 font-medium text-center">Thao tác</th>
+                                    <tr className="bg-gray-100 text-gray-600 uppercase text-xs tracking-widest">
+                                        <th className="px-6 py-4 font-bold">Tên tài khoản</th>
+                                        <th className="px-6 py-4 font-bold">Email</th>
+                                        <th className="px-6 py-4 font-bold">Số điện thoại</th>
+                                        <th className="px-6 py-4 font-bold text-center">Giới tính</th>
+                                        <th className="px-6 py-4 font-bold text-center">Thao tác</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
-                                    {loading ? (
+                                    {users && users.length > 0 ? (
+                                        users.map((user) => {
+                                            return (
+                                                <tr
+                                                    key={user.idUser || user.id}
+                                                    className="hover:bg-orange-50/50 transition-colors group cursor-pointer"
+                                                >
+                                                    <td className="px-6 py-4">
+                                                        <Link
+                                                            to={`/user-detail?name=${encodeURIComponent(user.fullName)}`}
+                                                            state={user}
+                                                            className="block w-full h-full text-gray-800 font-medium hover:text-orange-600"
+                                                        >
+                                                            {user.fullName}
+                                                        </Link>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-gray-800">
+                                                        <Link
+                                                            to={`/user-detail?name=${encodeURIComponent(user.fullName)}`}
+                                                            state={user}
+                                                            className="block w-full h-full font-semibold"
+                                                        >
+                                                            {user.email}
+                                                        </Link>
+                                                    </td>
+                                                    {/* Làm tương tự cho các cột SĐT và Giới tính để bấm đâu cũng nhận được state */}
+                                                    <td className="px-6 py-4 text-gray-600 font-mono">
+                                                        <Link
+                                                            to={`/user-detail?name=${encodeURIComponent(user.fullName)}`}
+                                                            state={user}
+                                                            className="block w-full h-full"
+                                                        >
+                                                            {user.numberPhone || '—'}
+                                                        </Link>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center">
+                                                        <Link
+                                                            to={`/user-detail?name=${encodeURIComponent(user.fullName)}`}
+                                                            state={user}
+                                                            className="inline-block"
+                                                        >
+                                                            <span
+                                                                className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                                                                    user.sex === 'Male'
+                                                                        ? 'bg-blue-50 text-blue-600 border-blue-100'
+                                                                        : 'bg-pink-50 text-pink-600 border-pink-100'
+                                                                }`}
+                                                            >
+                                                                {user.sex}
+                                                            </span>
+                                                        </Link>
+                                                    </td>
+                                                    {/* Cột thao tác giữ nguyên nút xóa kèm stopPropagation */}
+                                                    <td className="px-6 py-4 text-center">
+                                                        <button
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            className="text-red-500 hover:text-red-700"
+                                                        >
+                                                            <Trash2 size={18} />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })
+                                    ) : (
                                         <tr>
-                                            <td colSpan="5" className="py-10 text-center text-gray-500">
-                                                Đang tải dữ liệu...
+                                            <td colSpan="5" className="py-24 text-center">
+                                                <div className="flex flex-col items-center justify-center text-gray-400">
+                                                    <UserIcon size={40} className="mb-4 opacity-20" />
+                                                    <p>Hiện tại chưa có người dùng nào trong hệ thống</p>
+                                                </div>
                                             </td>
                                         </tr>
-                                    ) : (
-                                        users.map((user) => (
-                                            <tr key={user.id} className="hover:bg-gray-50 transition">
-                                                <td className="px-6 py-4 text-gray-900 font-medium">{user.name}</td>
-                                                <td className="px-6 py-4">
-                                                    <span
-                                                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                                                            user.gender === 'Nam'
-                                                                ? 'bg-blue-100 text-blue-700'
-                                                                : 'bg-pink-100 text-pink-700'
-                                                        }`}
-                                                    >
-                                                        {user.gender}
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-4 text-gray-600">{user.phone}</td>
-                                                <td className="px-6 py-4 text-gray-600">{user.email}</td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <button
-                                                        onClick={() => deleteUser(user.id)}
-                                                        className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition"
-                                                        title="Xóa người dùng"
-                                                    >
-                                                        <Trash2 size={20} />
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))
                                     )}
                                 </tbody>
                             </table>
                         </div>
-
-                        {!loading && users.length === 0 && (
-                            <div className="py-10 text-center text-gray-500">Không có dữ liệu người dùng.</div>
-                        )}
                     </div>
                 </div>
             </div>

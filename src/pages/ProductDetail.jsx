@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom'; // Thêm useNavigate
+import { useLocation, useNavigate, Link } from 'react-router-dom'; // Thêm useNavigate
 import Header from '../components/Header';
 import Notification from '../components/Notification';
 import SidebarAdmin from '../components/Sidebar/SidebarAdmin';
@@ -11,6 +11,7 @@ function ProductDetail() {
     const navigate = useNavigate();
     const product = location.state;
     const { deleteProductFromState } = useProducts(); // Lấy hàm xóa từ context
+    console.log(product);
 
     const [isExpanded, setIsExpanded] = useState(false);
     const [ratingData, setRatingData] = useState({ stars: 5, reviews: 0 });
@@ -86,7 +87,7 @@ function ProductDetail() {
         <div className="bg-gray-100 min-h-screen">
             <Header />
             <div className="flex">
-                <SidebarAdmin />
+                <SidebarAdmin activeTab="product" />
                 <div className="w-[1200px] h-fit min-h-[630px] mx-auto mt-10 bg-white pt-3 px-6 pb-10 shadow-lg rounded-sm">
                     <h1 className="text-center text-[30px] my-3 text-red-500 font-bold uppercase">
                         Thông tin chi tiết sản phẩm
@@ -150,15 +151,16 @@ function ProductDetail() {
                                     onClick={handleDelete}
                                     className="bg-red-500 text-white px-10 py-3 rounded-md hover:bg-red-600 cursor-pointer transition-all font-bold shadow-md active:scale-95"
                                 >
-                                    <i className="fa-solid fa-trash-can mr-2"></i> XÓA SẢN PHẨM
+                                    XÓA SẢN PHẨM
                                 </button>
 
-                                <button
-                                    onClick={() => navigate(-1)}
-                                    className="border border-gray-300 text-gray-600 px-10 py-3 rounded-md hover:bg-gray-50 cursor-pointer transition-all font-bold"
+                                <Link
+                                    to="/update-product"
+                                    state={product}
+                                    className="border border-green-600 text-white px-10 py-3 rounded-md bg-green-600 hover:bg-green-700 cursor-pointer transition-all font-bold"
                                 >
-                                    QUAY LẠI
-                                </button>
+                                    SỬA SẢN PHẨM
+                                </Link>
                             </div>
                         </div>
                     </div>

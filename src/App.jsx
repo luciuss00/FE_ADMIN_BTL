@@ -7,6 +7,7 @@ import BillManagement from './pages/BillManagement';
 import ProductDetail from './pages/ProductDetail';
 import AddProduct from './pages/AddProduct';
 import UpdateProduct from './pages/UpdateProduct';
+import UserDetail from './pages/UserDetail';
 
 import { ProductProvider } from './context/ProductContext';
 import { UserProvider } from './context/UserContext';
@@ -25,6 +26,7 @@ function App() {
                             <Route path="/detail" element={<ProductDetail />} />
                             <Route path="/add-product" element={<AddProduct />} />
                             <Route path="/update-product" element={<UpdateProduct />} />
+                            <Route path="/user-detail" element={<UserDetail />} />
                         </Routes>
                     </div>
                 </Router>

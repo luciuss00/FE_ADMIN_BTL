@@ -1,12 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 
-function ProductCard({ id, name, description, type, cost, quantity, img, onDelete }) {
+function ProductCard({ id, name, description, type, subCategory, cost, quantity, img, onDelete }) {
     const navigate = useNavigate();
 
     // Chuyển hướng khi click vào hàng (trừ nút xóa)
     const handleRowClick = () => {
         navigate(`/detail?name=${encodeURIComponent(name)}`, {
-            state: { id, name, description, type, cost, quantity, img },
+            state: { id, name, description, type, subCategory, cost, quantity, img },
         });
     };
 
