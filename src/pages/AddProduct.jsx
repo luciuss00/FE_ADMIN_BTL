@@ -82,6 +82,7 @@ const AddProduct = () => {
             };
 
             await ProductService.addProduct(dataSubmit);
+
             setNotification({ isOpen: true, message: 'Thêm sản phẩm thành công!', check: true });
             setTimeout(() => navigate('/product-management'), 1500);
         } catch (error) {

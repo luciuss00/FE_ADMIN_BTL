@@ -17,15 +17,8 @@ export const ProductProvider = ({ children }) => {
         }
     };
 
-    const refreshProduct = async () => {
-        if (isLoaded) return;
-        try {
-            const response = await ProductService.getAllProduct();
-            setProducts(response.data);
-            setIsLoaded(true);
-        } catch (error) {
-            console.error('Lỗi khi tải sản phẩm:', error);
-        }
+    const addProductToState = (newProduct) => {
+        setProducts((prevProducts) => [newProduct, ...prevProducts]);
     };
 
     const deleteProductFromState = (id) => {
@@ -33,7 +26,7 @@ export const ProductProvider = ({ children }) => {
     };
 
     return (
-        <ProductContext.Provider value={{ products, fetchProductsOnce, refreshProduct, deleteProductFromState }}>
+        <ProductContext.Provider value={{ products, fetchProductsOnce, deleteProductFromState, addProductToState }}>
             {children}
         </ProductContext.Provider>
     );

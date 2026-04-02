@@ -17,7 +17,13 @@ export const UserProvider = ({ children }) => {
         }
     };
 
-    return <UserContext.Provider value={{ users, fetchUsers }}>{children}</UserContext.Provider>;
+    const updateUserStatusInList = (userId, newStatus) => {
+        setUsers((prevUsers) => prevUsers.map((u) => (u.idUser === userId ? { ...u, status: newStatus } : u)));
+    };
+
+    return (
+        <UserContext.Provider value={{ users, fetchUsers, updateUserStatusInList }}>{children}</UserContext.Provider>
+    );
 };
 
 // Custom hook để dùng cho nhanh

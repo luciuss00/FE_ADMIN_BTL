@@ -33,7 +33,7 @@ const UserManagement = () => {
                                         <th className="px-6 py-4 font-bold">Email</th>
                                         <th className="px-6 py-4 font-bold">Số điện thoại</th>
                                         <th className="px-6 py-4 font-bold text-center">Giới tính</th>
-                                        <th className="px-6 py-4 font-bold text-center">Thao tác</th>
+                                        <th className="px-6 py-4 font-bold text-center">Trạng thái</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
@@ -91,12 +91,15 @@ const UserManagement = () => {
                                                     </td>
                                                     {/* Cột thao tác giữ nguyên nút xóa kèm stopPropagation */}
                                                     <td className="px-6 py-4 text-center">
-                                                        <button
-                                                            onClick={(e) => e.stopPropagation()}
-                                                            className="text-red-500 hover:text-red-700"
+                                                        <span
+                                                            className={`px-3 py-1 rounded-full text-xs font-bold ${
+                                                                user.status === 'active'
+                                                                    ? 'bg-green-100 text-green-700'
+                                                                    : 'bg-red-100 text-red-700'
+                                                            }`}
                                                         >
-                                                            <Trash2 size={18} />
-                                                        </button>
+                                                            {user.status === 'active' ? 'Hoạt động' : 'Bị khóa'}
+                                                        </span>
                                                     </td>
                                                 </tr>
                                             );
