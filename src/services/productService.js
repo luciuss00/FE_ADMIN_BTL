@@ -20,6 +20,11 @@ const ProductService = {
         const url = '/deleteProductById';
         return apiClient.post(url, productData);
     },
+
+    updateProduct(product) {
+        const url = '/updateProduct';
+        return apiClient.patch(url, product);
+    },
 };
 
 export default ProductService;

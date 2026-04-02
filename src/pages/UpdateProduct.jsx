@@ -1,22 +1,47 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import ProductService from '../services/productService';
 import Notification from '../components/Notification';
 import Header from '../components/Header';
 import SidebarAdmin from '../components/Sidebar/SidebarAdmin';
 
-const AddProduct = () => {
+const UpdateProduct = () => {
+    const { id } = useParams(); // Lấy ID sản phẩm từ URL (VD: /update-product/123)
     const navigate = useNavigate();
     const [notification, setNotification] = useState({ isOpen: false, message: '', check: false });
+
     const [product, setProduct] = useState({
-        nameProduct: '',
-        descriptionProduct: '',
-        priceProduct: '', // Để rỗng ban đầu thay vì 0 để validate 'thiếu' dễ hơn
-        quantity: '',
-        categoryProduct: '',
-        subCategoryProduct: '',
+        name: '',
+        description: '',
+        price: '',
+        stock: '',
+        category: '',
+        subCategory: '',
         imageLink: '',
     });
+
+    // 1. Lấy dữ liệu sản phẩm cũ khi vào trang
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                // Giả sử bạn có hàm getProductById trong ProductService
+                const response = await ProductService.getProductById(id);
+                const data = response.data;
+                setProduct({
+                    name: data.name,
+                    description: data.description,
+                    price: data.price,
+                    stock: data.stock,
+                    category: data.category,
+                    subCategory: data.subCategory,
+                    imageLink: data.imageLink,
+                });
+            } catch (error) {
+                setNotification({ isOpen: true, message: 'Không tìm thấy sản phẩm!', check: false });
+            }
+        };
+        fetchProduct();
+    }, [id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -26,71 +51,41 @@ const AddProduct = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // 1. Lấy dữ liệu từ state
-        const {
-            nameProduct,
-            priceProduct,
-            quantity,
-            categoryProduct,
-            subCategoryProduct,
-            imageLink,
-            descriptionProduct,
-        } = product;
+        // --- VALIDATE DỮ LIỆU ---
+        const { name, price, stock, category, subCategory, imageLink, description } = product;
 
-        // 2. Kiểm tra nhập thiếu (Trường nào trống sẽ báo lỗi)
-        if (
-            !nameProduct ||
-            !categoryProduct ||
-            !subCategoryProduct ||
-            !imageLink ||
-            !descriptionProduct ||
-            !priceProduct ||
-            !quantity
-        ) {
-            setNotification({
-                isOpen: true,
-                message: 'Vui lòng điền đầy đủ tất cả các thông tin!',
-                check: false,
-            });
-            return; // Dừng hàm, không chạy code bên dưới
-        }
-
-        // 3. Kiểm tra Giá và Số lượng (Phải là số dương)
-        const price = Number(priceProduct);
-        const stock = Number(quantity);
-
-        if (price < 0 || stock < 0) {
-            setNotification({
-                isOpen: true,
-                message: 'Giá và số lượng không được là số âm!',
-                check: false,
-            });
+        if (!name || !category || !subCategory || !imageLink || !description) {
+            setNotification({ isOpen: true, message: 'Vui lòng nhập đầy đủ thông tin!', check: false });
             return;
         }
 
-        // 4. Nếu vượt qua các bước trên mới bắt đầu gọi API
+        if (Number(price) < 0 || Number(stock) < 0) {
+            setNotification({ isOpen: true, message: 'Giá và số lượng không được âm!', check: false });
+            return;
+        }
+
         try {
             const dataSubmit = {
-                name: nameProduct,
-                description: descriptionProduct,
-                price: price,
-                stock: stock,
-                originalPrice: 0,
-                category: categoryProduct,
+                id: id, // Backend cần ID để findById
+                name: name,
+                description: description,
+                price: Number(price),
+                stock: Number(stock),
+                category: category,
+                subCategory: subCategory,
                 imageLink: imageLink,
-                subCategory: subCategoryProduct,
             };
 
-            await ProductService.addProduct(dataSubmit);
-            setNotification({ isOpen: true, message: 'Thêm sản phẩm thành công!', check: true });
+            await ProductService.updateProduct(dataSubmit);
+
+            setNotification({ isOpen: true, message: 'Cập nhật thành công!', check: true });
             setTimeout(() => navigate('/product-management'), 1500);
         } catch (error) {
             setNotification({
                 isOpen: true,
-                message: 'Lỗi hệ thống khi thêm sản phẩm!',
+                message: error.response?.data?.message || 'Lỗi khi cập nhật sản phẩm!',
                 check: false,
             });
-            console.log(error);
         }
     };
 
@@ -100,16 +95,17 @@ const AddProduct = () => {
             <div className="flex">
                 <SidebarAdmin />
                 <div className="mx-auto mt-7 w-200">
-                    <h2 className="text-2xl font-bold mb-6 text-gray-800">Thêm Sản Phẩm Mới</h2>
+                    <h2 className="text-2xl font-bold mb-6 text-gray-800">Chỉnh Sửa Sản Phẩm</h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        {/* Tên sản phẩm */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Tên sản phẩm</label>
                             <input
                                 type="text"
-                                name="nameProduct"
+                                name="name"
+                                value={product.name}
+                                required
                                 onChange={handleChange}
-                                className="w-full p-2 border rounded-md mt-1 outline-none focus:border-red-500"
+                                className="w-full p-2 border rounded-md mt-1 outline-none focus:border-blue-500"
                             />
                         </div>
 
@@ -118,45 +114,49 @@ const AddProduct = () => {
                                 <label className="block text-sm font-medium text-gray-700">Giá (VNĐ)</label>
                                 <input
                                     type="number"
-                                    name="priceProduct"
+                                    name="price"
+                                    value={product.price}
+                                    min="0"
+                                    required
                                     onChange={handleChange}
-                                    className="w-full p-2 border rounded-md mt-1 outline-none focus:border-red-500"
-                                    placeholder="0"
+                                    className="w-full p-2 border rounded-md mt-1 outline-none focus:border-blue-500"
                                 />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Số lượng</label>
                                 <input
                                     type="number"
-                                    name="quantity"
+                                    name="stock"
+                                    value={product.stock}
                                     min="0"
+                                    required
                                     onChange={handleChange}
-                                    className="w-full p-2 border rounded-md mt-1 outline-none focus:border-red-500"
-                                    placeholder="0"
+                                    className="w-full p-2 border rounded-md mt-1 outline-none focus:border-blue-500"
                                 />
                             </div>
                         </div>
 
-                        {/* Các field khác giữ nguyên... */}
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Danh mục chính</label>
                                 <input
                                     type="text"
-                                    name="categoryProduct"
-                                    placeholder="VD: Thiết bị"
+                                    name="category"
+                                    value={product.category}
+                                    required
                                     onChange={handleChange}
-                                    className="w-full p-2 border rounded-md mt-1 outline-none focus:border-red-500"
+                                    className="w-full p-2 border rounded-md mt-1 outline-none"
                                 />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Danh mục phụ</label>
                                 <input
                                     type="text"
-                                    name="subCategoryProduct"
-                                    placeholder="VD: Cân"
+                                    name="subCategory"
+                                    value={product.subCategory}
+                                    required
                                     onChange={handleChange}
-                                    className="w-full p-2 border rounded-md mt-1 outline-none focus:border-red-500"
+                                    className="w-full p-2 border rounded-md mt-1 outline-none"
                                 />
                             </div>
                         </div>
@@ -166,32 +166,36 @@ const AddProduct = () => {
                             <input
                                 type="text"
                                 name="imageLink"
+                                value={product.imageLink}
+                                required
                                 onChange={handleChange}
-                                className="w-full p-2 border rounded-md mt-1 outline-none focus:border-red-500"
+                                className="w-full p-2 border rounded-md mt-1 outline-none"
                             />
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Mô tả sản phẩm</label>
                             <textarea
-                                name="descriptionProduct"
+                                name="description"
+                                value={product.description}
                                 rows="4"
+                                required
                                 onChange={handleChange}
-                                className="w-full p-2 border rounded-md mt-1 outline-none focus:border-red-500"
+                                className="w-full p-2 border rounded-md mt-1 outline-none"
                             ></textarea>
                         </div>
 
                         <div className="flex gap-4 pt-4">
                             <button
                                 type="submit"
-                                className="flex-1 cursor-pointer bg-red-500 text-white py-2 rounded-md hover:bg-red-600 font-bold transition-all"
+                                className="flex-1 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 font-bold transition-all"
                             >
-                                Lưu sản phẩm
+                                Lưu thay đổi
                             </button>
                             <button
                                 type="button"
                                 onClick={() => navigate(-1)}
-                                className="flex-1 cursor-pointer bg-gray-200 text-gray-800 py-2 rounded-md hover:bg-gray-300 font-bold"
+                                className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-md hover:bg-gray-300 font-bold"
                             >
                                 Hủy
                             </button>
@@ -210,4 +214,4 @@ const AddProduct = () => {
     );
 };
 
-export default AddProduct;
+export default UpdateProduct;

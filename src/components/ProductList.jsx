@@ -61,7 +61,9 @@ function ProductList({ filterType, name = '' }) {
             priceSort === 'asc' ? a.priceProduct - b.priceProduct : b.priceProduct - a.priceProduct,
         );
     } else if (stockSort) {
-        filtered.sort((a, b) => (stockSort === 'asc' ? a.quantity - b.quantity : b.quantity - a.quantity));
+        filtered.sort((a, b) =>
+            stockSort === 'asc' ? a.quantityProduct - b.quantityProduct : b.quantityProduct - a.quantityProduct,
+        );
     }
 
     const displayProducts = filtered.slice(0, visibleCount);
@@ -127,7 +129,7 @@ function ProductList({ filterType, name = '' }) {
                                     description={product.descriptionProduct}
                                     type={product.categoryProduct}
                                     cost={product.priceProduct}
-                                    quantity={product.quantity}
+                                    quantity={product.quantityProduct}
                                     img={product.imageLink}
                                     onDelete={handleDelete}
                                 />

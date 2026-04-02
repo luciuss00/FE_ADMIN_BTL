@@ -56,7 +56,7 @@ function SideBar() {
                             type="checkbox"
                             checked={priceSort === 'asc'}
                             onChange={() => updateParams('priceSort', 'asc')}
-                            className="w-4 h-4 accent-red-500 rounded"
+                            className="w-4 h-4 accent-red-500 rounded cursor-pointer"
                         />
                         Giá: Thấp đến Cao
                     </label>
@@ -65,7 +65,7 @@ function SideBar() {
                             type="checkbox"
                             checked={priceSort === 'desc'}
                             onChange={() => updateParams('priceSort', 'desc')}
-                            className="w-4 h-4 accent-red-500 rounded"
+                            className="w-4 h-4 accent-red-500 rounded cursor-pointer"
                         />
                         Giá: Cao đến Thấp
                     </label>
@@ -74,7 +74,7 @@ function SideBar() {
                             type="checkbox"
                             checked={stockSort === 'asc'}
                             onChange={() => updateParams('stockSort', 'asc')}
-                            className="w-4 h-4 accent-red-500 rounded"
+                            className="w-4 h-4 accent-red-500 rounded cursor-pointer"
                         />
                         Kho: Ít nhất
                     </label>
@@ -83,7 +83,7 @@ function SideBar() {
                             type="checkbox"
                             checked={stockSort === 'desc'}
                             onChange={() => updateParams('stockSort', 'desc')}
-                            className="w-4 h-4 accent-red-500 rounded"
+                            className="w-4 h-4 accent-red-500 rounded cursor-pointer"
                         />
                         Kho: Nhiều nhất
                     </label>

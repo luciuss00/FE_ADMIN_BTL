@@ -6,6 +6,7 @@ import ProductManagement from './pages/ProductManagement';
 import BillManagement from './pages/BillManagement';
 import ProductDetail from './pages/ProductDetail';
 import AddProduct from './pages/AddProduct';
+import UpdateProduct from './pages/UpdateProduct';
 
 import { ProductProvider } from './context/ProductContext';
 import { UserProvider } from './context/UserContext';
@@ -23,6 +24,7 @@ function App() {
                             <Route path="/bill-management" element={<BillManagement />} />
                             <Route path="/detail" element={<ProductDetail />} />
                             <Route path="/add-product" element={<AddProduct />} />
+                            <Route path="/update-product" element={<UpdateProduct />} />
                         </Routes>
                     </div>
                 </Router>
