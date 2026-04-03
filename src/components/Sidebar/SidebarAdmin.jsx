@@ -16,10 +16,10 @@ function SidebarAdmin({ activeTab }) {
             link: '/product-management',
         },
         {
-            id: 'bill',
+            id: 'order',
             name: 'Quản lý hóa đơn',
             icon: <i className="fa-solid fa-receipt"></i>,
-            link: '/bill-management',
+            link: '/order-management/all',
         },
     ];
 
