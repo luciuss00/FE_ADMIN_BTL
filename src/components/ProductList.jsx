@@ -3,10 +3,13 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { useProducts } from '../context/ProductContext';
 import ProductService from '../services/productService';
 import ProductCard from './ProductCard';
-import Notification from './Notification';
+import NotificationRedo from './NotificationRedo';
 
 function ProductList({ filterType, name = '' }) {
-    const { products, fetchProductsOnce, deleteProductFromState } = useProducts();
+    const { products, fetchProductsOnce, deleteProductFromState, addProductBackToState } = useProducts();
+
+    const [undoTimer, setUndoTimer] = useState(null);
+    const [tempDeletedProduct, setTempDeletedProduct] = useState(null);
 
     const [visibleCount, setVisibleCount] = useState(12);
     const [searchParams] = useSearchParams();
@@ -15,11 +18,8 @@ function ProductList({ filterType, name = '' }) {
         isOpen: false,
         message: '',
         check: false,
+        showUndo: false,
     });
-
-    const closeNotification = () => {
-        setNotification({ ...notification, isOpen: false });
-    };
 
     useEffect(() => {
         fetchProductsOnce();
@@ -69,31 +69,70 @@ function ProductList({ filterType, name = '' }) {
 
     const handleLoadMore = () => setVisibleCount((prev) => prev + 12);
 
-    const handleDelete = async (id) => {
-        if (!id) return;
+    const handleUndo = async () => {
+        if (!tempDeletedProduct) return;
 
-        if (window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
-            try {
-                await ProductService.deleteProduct(id);
-                deleteProductFromState(id);
+        try {
+            // 1. Gọi API Redo
+            await ProductService.redoProduct(tempDeletedProduct.id);
 
-                // Thông báo thành công (check = true)
-                setNotification({
-                    isOpen: true,
-                    message: 'Xóa sản phẩm thành công!',
-                    check: true,
-                });
-            } catch (error) {
-                console.error('Lỗi khi xóa:', error);
+            // 2. CẬP NHẬT STATE NGAY LẬP TỨC (Không load lại trang)
+            addProductBackToState(tempDeletedProduct);
 
-                // Thông báo thất bại (check = false)
-                setNotification({
-                    isOpen: true,
-                    message: 'Xóa thất bại. Vui lòng thử lại sau.',
-                    check: false,
-                });
-            }
+            // 3. Hủy bộ đếm xóa vĩnh viễn
+            clearTimeout(undoTimer);
+
+            // 4. Đóng thông báo
+            setNotification({ ...notification, isOpen: false });
+            setTempDeletedProduct(null);
+        } catch (error) {
+            console.error('Lỗi khi hoàn tác:', error);
         }
+    };
+
+    const executeFinalDelete = async (id) => {
+        try {
+            await ProductService.deleteProduct(id);
+            setTempDeletedProduct(null);
+            setUndoTimer(null);
+            // Đóng thông báo ngay lập tức
+            setNotification((prev) => ({ ...prev, isOpen: false }));
+        } catch (error) {
+            console.error('Lỗi xóa vĩnh viễn:', error);
+        }
+    };
+
+    // Hàm đóng thông báo - SỬA ĐỔI CHÍNH Ở ĐÂY
+    const closeNotificationAndConfirmDelete = () => {
+        if (undoTimer && tempDeletedProduct) {
+            // Nếu đang trong trạng thái chờ (có timer), xóa ngay lập tức
+            clearTimeout(undoTimer);
+            executeFinalDelete(tempDeletedProduct.id);
+        }
+        setNotification({ ...notification, isOpen: false });
+    };
+
+    const handleDelete = async (id) => {
+        const productToDelete = products.find((p) => p.id === id);
+        if (!productToDelete) return;
+
+        setTempDeletedProduct(productToDelete);
+        deleteProductFromState(id); // Xóa khỏi UI ngay
+
+        setNotification({
+            isOpen: true,
+            message: 'Đã chuyển sản phẩm vào thùng rác.',
+            check: true,
+            showUndo: true,
+        });
+
+        // Thiết lập 5 giây
+        const timer = setTimeout(() => {
+            // Hết 5s là gọi hàm xóa và hàm này sẽ tự đóng notification luôn
+            executeFinalDelete(id);
+        }, 5000);
+
+        setUndoTimer(timer);
     };
 
     return (
@@ -155,11 +194,13 @@ function ProductList({ filterType, name = '' }) {
                     </button>
                 </div>
             )}
-            <Notification
+            <NotificationRedo
                 isOpen={notification.isOpen}
                 message={notification.message}
                 check={notification.check}
-                onClose={closeNotification}
+                showUndo={notification.showUndo}
+                onUndo={handleUndo}
+                onClose={closeNotificationAndConfirmDelete} // Truyền hàm xử lý "Đóng = Xóa luôn"
             />
         </div>
     );

@@ -9,10 +9,7 @@ const ProductService = {
     deleteProduct(id) {
         const url = '/deleteProduct';
         return apiClient.delete(url, {
-            data: id,
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            params: { id },
         });
     },
 
@@ -24,6 +21,13 @@ const ProductService = {
     updateProduct(product) {
         const url = '/updateProduct';
         return apiClient.patch(url, product);
+    },
+
+    redoProduct(id) {
+        const url = '/redoProductForAdmin';
+        return apiClient.post(url, null, {
+            params: { id: id },
+        });
     },
 };
 

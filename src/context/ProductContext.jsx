@@ -17,6 +17,10 @@ export const ProductProvider = ({ children }) => {
         }
     };
 
+    const addProductBackToState = (product) => {
+        setProducts((prev) => [product, ...prev]); // Đưa sản phẩm lại đầu danh sách
+    };
+
     const addProductToState = (newProduct) => {
         setProducts((prevProducts) => [newProduct, ...prevProducts]);
     };
@@ -26,7 +30,15 @@ export const ProductProvider = ({ children }) => {
     };
 
     return (
-        <ProductContext.Provider value={{ products, fetchProductsOnce, deleteProductFromState, addProductToState }}>
+        <ProductContext.Provider
+            value={{
+                products,
+                fetchProductsOnce,
+                addProductBackToState,
+                deleteProductFromState,
+                addProductToState,
+            }}
+        >
             {children}
         </ProductContext.Provider>
     );

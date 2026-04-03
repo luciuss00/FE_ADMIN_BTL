@@ -1,83 +1,97 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate, Link } from 'react-router-dom'; // Thêm useNavigate
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import Header from '../components/Header';
-import Notification from '../components/Notification';
+import NotificationRedo from '../components/NotificationRedo'; // Sử dụng bản Redo
 import SidebarAdmin from '../components/Sidebar/SidebarAdmin';
-import ProductService from '../services/productService'; // Import Service của bạn
-import { useProducts } from '../context/ProductContext'; // Import context để xóa state
+import ProductService from '../services/productService';
+import { useProducts } from '../context/ProductContext';
 
 function ProductDetail() {
     const location = useLocation();
     const navigate = useNavigate();
     const product = location.state;
-    const { deleteProductFromState } = useProducts(); // Lấy hàm xóa từ context
-    console.log(product);
+    const { deleteProductFromState } = useProducts();
 
     const [isExpanded, setIsExpanded] = useState(false);
-    const [ratingData, setRatingData] = useState({ stars: 5, reviews: 0 });
+    const [undoTimer, setUndoTimer] = useState(null); // Lưu ref của bộ đếm 5s
+
     const [notification, setNotification] = useState({
         isOpen: false,
         message: '',
         check: false,
+        showUndo: false,
     });
 
-    // Hàm xử lý xóa
-    const handleDelete = async () => {
-        if (!product?.id) return;
+    // Cleanup timer khi component unmount để tránh memory leak
+    useEffect(() => {
+        return () => {
+            if (undoTimer) clearTimeout(undoTimer);
+        };
+    }, [undoTimer]);
 
-        const isConfirm = window.confirm(`Bạn có chắc chắn muốn xóa "${product.name}"?`);
-        if (!isConfirm) return;
-
+    // Hàm xử lý khi bấm nút HOÀN TÁC
+    const handleUndo = async () => {
         try {
-            // 1. Gọi API xóa
-            await ProductService.deleteProduct(product.id);
+            // Gọi API redo (nếu cần thiết, hoặc đơn giản là hủy lệnh xóa chưa gửi)
+            if (product?.id) {
+                await ProductService.redoProduct(product.id);
+            }
 
-            // 2. Cập nhật state cục bộ (nếu danh sách sản phẩm nằm trong context)
+            // Hủy bộ đếm xóa thật
+            clearTimeout(undoTimer);
+            setUndoTimer(null);
+
+            // Đóng thông báo
+            setNotification({ ...notification, isOpen: false });
+        } catch (error) {
+            console.error('Lỗi hoàn tác:', error);
+        }
+    };
+
+    const executeDelete = async () => {
+        try {
+            await ProductService.deleteProduct(product.id);
             if (deleteProductFromState) {
                 deleteProductFromState(product.id);
             }
-
-            // 3. Thông báo thành công
-            setNotification({
-                isOpen: true,
-                message: 'Xóa sản phẩm thành công!',
-                check: true,
-            });
-
-            // 4. Chuyển hướng sau 1.5 giây
-            setTimeout(() => {
-                navigate(-1); // Quay lại trang trước đó (thường là danh sách sản phẩm)
-            }, 1000);
+            navigate(-1); // Quay lại trang trước
         } catch (error) {
             console.error('Lỗi khi xóa:', error);
             setNotification({
                 isOpen: true,
-                message: 'Xóa thất bại. Vui lòng thử lại!',
+                message: 'Lỗi khi xóa sản phẩm!',
                 check: false,
+                showUndo: false,
             });
         }
     };
 
-    const closeNotification = () => {
-        setNotification({ ...notification, isOpen: false });
+    // Sửa lại hàm handleDelete để dùng executeDelete
+    const handleDelete = () => {
+        if (!product?.id) return;
+
+        setNotification({
+            isOpen: true,
+            message: 'Đã xóa sản phẩm!',
+            check: true,
+            showUndo: true,
+        });
+
+        const timer = setTimeout(() => {
+            executeDelete(); // Hết 5s thì xóa
+        }, 5000);
+
+        setUndoTimer(timer);
     };
 
-    useEffect(() => {
-        if (product?.id) {
-            const storageKey = `product_rating_${product.id}`;
-            const savedData = localStorage.getItem(storageKey);
-
-            if (savedData) {
-                setRatingData(JSON.parse(savedData));
-            } else {
-                const newStars = Math.floor(Math.random() * 2) + 3;
-                const newReviews = Math.floor(Math.random() * 400) + 50;
-                const newData = { stars: newStars, reviews: newReviews };
-                localStorage.setItem(storageKey, JSON.stringify(newData));
-                setRatingData(newData);
-            }
+    const closeNotification = () => {
+        if (undoTimer) {
+            clearTimeout(undoTimer); // Dừng bộ đếm 5s
+            setUndoTimer(null);
+            executeDelete(); // Thực hiện xóa ngay lập tức
         }
-    }, [product?.id]);
+        setNotification((prev) => ({ ...prev, isOpen: false }));
+    };
 
     if (!product) {
         return <div className="p-10 text-center">Không tìm thấy thông tin sản phẩm.</div>;
@@ -94,44 +108,35 @@ function ProductDetail() {
                     </h1>
 
                     <div className="flex gap-10 mt-6">
-                        {/* Cột trái: Ảnh */}
+                        {/* Ảnh sản phẩm */}
                         <div className="w-[450px]">
                             <div className="border p-2">
                                 <img src={product.img} alt={product.name} className="w-full h-[400px] object-contain" />
                             </div>
                         </div>
 
-                        {/* Cột phải: Thông tin */}
+                        {/* Thông tin sản phẩm */}
                         <div className="flex-1">
                             <h1 className="text-[26px] font-semibold text-gray-800">{product.name}</h1>
-
-                            <div className="flex items-center gap-4 mt-2 text-sm">
-                                <span className="text-yellow-500">
-                                    {'★'.repeat(ratingData.stars)}
-                                    {'☆'.repeat(5 - ratingData.stars)}
-                                </span>
-                                <span className="text-gray-500">{ratingData.reviews} Đánh giá</span>
-                            </div>
-
                             <p className="mt-4 text-[14px] text-gray-500">
                                 Thể loại: <span className="text-gray-800 font-medium">{product.type}</span>
                             </p>
 
+                            {/* Mô tả */}
                             <div className="mt-4 text-[14px]">
                                 <p className="text-gray-500 font-medium">Mô tả: </p>
-                                <div
-                                    className={`text-gray-700 leading-relaxed mt-1 ${!isExpanded ? 'line-clamp-3' : ''}`}
-                                >
-                                    {product.description || 'Không có mô tả cho sản phẩm này.'}
+                                <div className={`text-gray-700 mt-1 ${!isExpanded ? 'line-clamp-3' : ''}`}>
+                                    {product.description || 'Không có mô tả.'}
                                 </div>
                                 <button
                                     onClick={() => setIsExpanded(!isExpanded)}
-                                    className="text-blue-500 cursor-pointer mt-1 hover:underline text-[13px] font-medium transition-all"
+                                    className="text-blue-500 cursor-pointer mt-1 hover:underline"
                                 >
                                     {isExpanded ? 'Thu gọn' : 'Xem thêm'}
                                 </button>
                             </div>
 
+                            {/* Giá */}
                             <div className="mt-6">
                                 <p className="font-bold text-[18px] text-gray-700">GIÁ BÁN:</p>
                                 <div className="bg-gray-100 p-4 rounded-md mt-1">
@@ -145,11 +150,11 @@ function ProductDetail() {
                                 Số lượng: <span className="text-gray-800 font-medium">{product.quantity}</span>
                             </p>
 
-                            {/* BUTTONS */}
+                            {/* Nút bấm */}
                             <div className="flex gap-4 mt-10">
                                 <button
                                     onClick={handleDelete}
-                                    className="bg-red-500 text-white px-10 py-3 rounded-md hover:bg-red-600 cursor-pointer transition-all font-bold shadow-md active:scale-95"
+                                    className="bg-red-500 text-white px-10 py-3 rounded-md hover:bg-red-600 font-bold shadow-md active:scale-95 transition-all cursor-pointer"
                                 >
                                     XÓA SẢN PHẨM
                                 </button>
@@ -157,7 +162,7 @@ function ProductDetail() {
                                 <Link
                                     to="/update-product"
                                     state={product}
-                                    className="border border-green-600 text-white px-10 py-3 rounded-md bg-green-600 hover:bg-green-700 cursor-pointer transition-all font-bold"
+                                    className="bg-green-600 text-white px-10 py-3 rounded-md hover:bg-green-700 font-bold"
                                 >
                                     SỬA SẢN PHẨM
                                 </Link>
@@ -167,11 +172,14 @@ function ProductDetail() {
                 </div>
             </div>
 
-            <Notification
+            {/* Component thông báo có nút hoàn tác */}
+            <NotificationRedo
                 isOpen={notification.isOpen}
                 message={notification.message}
                 check={notification.check}
+                showUndo={notification.showUndo}
                 onClose={closeNotification}
+                onUndo={handleUndo}
             />
         </div>
     );
