@@ -62,7 +62,7 @@ const NotificationRedo = ({ isOpen, message, onClose, check, showUndo, onUndo })
                     {check && showUndo && countdown > 0 && (
                         <button
                             onClick={handleUndoClick}
-                            className="flex-1 bg-white border border-gray-300 text-gray-700 py-2.5 rounded-xl hover:bg-gray-50 transition-colors font-medium cursor-pointer"
+                            className="flex-1 bg-white border border-gray-300 text-gray-700 py-2.5 rounded-xl hover:bg-gray-100 transition-colors font-medium cursor-pointer"
                         >
                             <i className="fa-solid fa-rotate-left mr-2 text-gray-500"></i>
                             Hoàn tác ({countdown}s)

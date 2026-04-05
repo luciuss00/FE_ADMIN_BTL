@@ -80,7 +80,7 @@ const UserManagement = () => {
                                                         >
                                                             <span
                                                                 className={`px-3 py-1 rounded-full text-xs font-bold border ${
-                                                                    user.sex === 'Male'
+                                                                    user.sex === 'Nam   '
                                                                         ? 'bg-blue-50 text-blue-600 border-blue-100'
                                                                         : 'bg-pink-50 text-pink-600 border-pink-100'
                                                                 }`}

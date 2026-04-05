@@ -21,7 +21,7 @@ import Ship from './pages/OrderManagement/Ship';
 
 import { UserProvider } from './context/UserContext';
 import { ProductProvider } from './context/ProductContext';
-import { OrderProvider } from './context/OrderContex';
+import { OrderProvider } from './context/OrderContext';
 
 function App() {
     return (

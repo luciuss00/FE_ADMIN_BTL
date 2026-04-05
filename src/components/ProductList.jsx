@@ -74,6 +74,7 @@ function ProductList({ filterType, name = '' }) {
 
         try {
             // 1. Gọi API Redo
+
             await ProductService.redoProduct(tempDeletedProduct.id);
 
             // 2. CẬP NHẬT STATE NGAY LẬP TỨC (Không load lại trang)
