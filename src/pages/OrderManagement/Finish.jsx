@@ -1,15 +1,92 @@
+import { useState, useEffect, useMemo } from 'react';
 import Header from '../../components/Header';
 import HeaderOrder from '../../components/HeaderOrder';
 import SidebarAdmin from '../../components/Sidebar/SidebarAdmin';
+import Notification from '../../components/Notification';
+import { useOrder } from '../../context/OrderContext';
 
 function Finish() {
+    const { orders, fetchOrders } = useOrder();
+
+    // State quản lý thông báo
+    const [notif, setNotif] = useState({
+        isOpen: false,
+        message: '',
+        check: false,
+    });
+
+    useEffect(() => {
+        fetchOrders();
+    }, [fetchOrders]);
+
+    // 1. Logic lọc: Chỉ lấy đơn hàng đã HOÀN THÀNH
+    const completedOrders = useMemo(() => {
+        return orders.filter((order) => order.status === 'COMPLETED');
+    }, [orders]);
+
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+    };
+
+    const renderStatus = (status) => {
+        return <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">{status}</span>;
+    };
+
     return (
         <div>
             <Header />
-            <div className="flex bg-gray-100">
+            <div className="flex bg-gray-100 min-h-screen">
                 <SidebarAdmin activeTab="order" />
-                <HeaderOrder activeTab="finish" />
+                <div className="flex-1">
+                    <HeaderOrder activeTab="finish" />
+                    <div className="container mx-auto p-6 ml-24 w-312">
+                        <h2 className="text-2xl font-bold mb-6 text-gray-800">Lịch Sử Đơn Hàng Hoàn Thành</h2>
+
+                        <div className="overflow-x-auto bg-white shadow-md rounded-lg">
+                            <table className="min-w-full table-auto">
+                                <thead>
+                                    <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                        <th className="py-3 px-6 text-left">STT</th>
+                                        <th className="py-3 px-6 text-left">Mô tả</th>
+                                        <th className="py-3 px-6 text-center">Trạng thái</th>
+                                        <th className="py-3 px-6 text-right">Tổng tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="text-gray-600 text-sm font-light">
+                                    {completedOrders.length > 0 ? (
+                                        completedOrders.map((order, index) => (
+                                            <tr
+                                                key={order.idOrder}
+                                                className="border-b border-gray-200 hover:bg-gray-50 transition duration-300"
+                                            >
+                                                <td className="py-3 px-6 whitespace-nowrap font-medium">{index + 1}</td>
+                                                <td className="py-3 px-6 text-left text-[16px]">{order.des}</td>
+                                                <td className="py-3 px-6 text-center">{renderStatus(order.status)}</td>
+                                                <td className="py-3 px-6 text-right font-semibold text-[16px] text-blue-600">
+                                                    {formatCurrency(order.total_amount)}
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="5" className="py-10 text-center text-gray-500 italic">
+                                                Chưa có đơn hàng nào hoàn thành.
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <Notification
+                isOpen={notif.isOpen}
+                message={notif.message}
+                check={notif.check}
+                onClose={() => setNotif({ ...notif, isOpen: false })}
+            />
         </div>
     );
 }

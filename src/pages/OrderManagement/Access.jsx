@@ -98,15 +98,15 @@ function Access() {
                                                 <td className="py-3 px-6 text-left whitespace-nowrap font-medium">
                                                     {index + 1}
                                                 </td>
-                                                <td className="py-3 px-6 text-left">{order.des}</td>
+                                                <td className="py-3 px-6 text-left text-[16px]">{order.des}</td>
                                                 <td className="py-3 px-6 text-center">{renderStatus(order.status)}</td>
-                                                <td className="py-3 px-6 text-right font-semibold text-red-500">
+                                                <td className="py-3 px-6 text-right font-semibold text-[16px] text-blue-500">
                                                     {formatCurrency(order.total_amount)}
                                                 </td>
                                                 <td className="py-3 px-6 text-center">
                                                     <button
                                                         onClick={() => handleConfirm(order.idOrder)}
-                                                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded shadow text-xs font-bold transition active:scale-95"
+                                                        className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-[14px] px-4 py-[4px] text-white rounded shadow text-xs font-bold transition active:scale-95"
                                                     >
                                                         Xác nhận
                                                     </button>
