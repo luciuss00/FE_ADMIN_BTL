@@ -13,7 +13,7 @@ function All() {
     useEffect(() => {
         fetchOrders();
     }, [fetchOrders]);
-
+    console.log(orders);
     // Hàm xử lý Xác nhận (PENDING -> DELIVERING)
     const handleConfirm = async (id) => {
         try {

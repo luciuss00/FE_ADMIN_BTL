@@ -4,10 +4,13 @@ import SidebarAdmin from '../components/Sidebar/SidebarAdmin';
 import Header from '../components/Header';
 import { useProducts } from '../context/ProductContext';
 import { useUser } from '../context/UserContext';
+import { useOrder } from '../context/OrderContext';
 
 function Home() {
     const { products, fetchProductsOnce } = useProducts();
     const { users, fetchUsers } = useUser();
+    const { orders, fetchOrders } = useOrder();
+
     useEffect(() => {
         fetchProductsOnce();
     }, [fetchProductsOnce]);
@@ -15,6 +18,18 @@ function Home() {
     useEffect(() => {
         fetchUsers();
     }, [fetchUsers]);
+
+    useEffect(() => {
+        fetchOrders();
+    }, [fetchOrders]);
+    console.log(orders);
+
+    function getTotalCompleted() {
+        return orders
+            .filter((order) => order.status === 'COMPLETED') // Giữ lại các đơn hàng thành công
+            .reduce((sum, order) => sum + Number(order.total_amount), 0); // Cộng dồn
+    }
+
     return (
         <div>
             {/* 1. Sidebar - Cố định chiều rộng */}
@@ -38,8 +53,14 @@ function Home() {
                             <Link to="/user-management">
                                 <StatCard title="Người dùng " value={users.length} color="bg-blue-500" />
                             </Link>
-                            <StatCard title="Doanh thu" value="$12,400" color="bg-green-500" />
-                            <StatCard title="Đơn hàng" value="452" color="bg-purple-500" />
+                            <StatCard
+                                title="Doanh thu"
+                                value={getTotalCompleted().toLocaleString('vi-VN') + ' đ'}
+                                color="bg-green-500"
+                            />
+                            <Link to="/order-management/all">
+                                <StatCard title="Đơn hàng" value={orders.length} color="bg-purple-500" />
+                            </Link>
                         </div>
 
                         {/* Khu vực biểu đồ hoặc danh sách bảng biểu bên dưới */}
