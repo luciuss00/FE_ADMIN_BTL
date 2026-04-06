@@ -5,7 +5,6 @@ const TABS = [
     { id: 2, name: 'access', label: 'Chờ xác nhận', link: '/order-management/access' },
     { id: 3, name: 'ship', label: 'Chờ giao hàng', link: '/order-management/ship' },
     { id: 4, name: 'finish', label: 'Hoàn thành', link: '/order-management/finish' },
-    { id: 5, name: 'cancel', label: 'Đã hủy', link: '/order-management//cancel' },
 ];
 
 function HeaderOrder({ activeTab }) {
@@ -15,7 +14,7 @@ function HeaderOrder({ activeTab }) {
                 {TABS.map((tab) => (
                     <Link to={tab.link} key={tab.id}>
                         <button
-                            className={`px-[87px] py-4 text-center text-sm transition-colors duration-200 border-b-2 cursor-pointer 
+                            className={`px-[114px] py-4 text-center text-sm transition-colors duration-200 border-b-2 cursor-pointer 
                         ${
                             activeTab === tab.name
                                 ? 'text-red-500 border-red-500'

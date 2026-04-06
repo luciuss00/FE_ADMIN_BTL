@@ -15,7 +15,7 @@ import Search from './pages/Search';
 
 import All from './pages/OrderManagement/All';
 import Access from './pages/OrderManagement/Access';
-import Cancel from './pages/OrderManagement/Cancel';
+
 import Finish from './pages/OrderManagement/Finish';
 import Ship from './pages/OrderManagement/Ship';
 import OrderDetail from './pages/OrderDetail';
@@ -48,7 +48,7 @@ function App() {
                                     <Route path="/order-management/access" element={<Access />} />
                                     <Route path="/order-management/ship" element={<Ship />} />
                                     <Route path="/order-management/finish" element={<Finish />} />
-                                    <Route path="/order-management/cancel" element={<Cancel />} />
+
                                     <Route path="/order-management/:id" element={<OrderDetail />} />
                                 </Route>
 
