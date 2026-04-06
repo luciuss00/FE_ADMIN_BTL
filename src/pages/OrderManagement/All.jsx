@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import HeaderOrder from '../../components/HeaderOrder';
 import SidebarAdmin from '../../components/Sidebar/SidebarAdmin';
@@ -7,13 +8,14 @@ import OrderService from '../../services/orderService';
 import { useOrder } from '../../context/OrderContext';
 
 function All() {
+    const navigate = useNavigate();
     const { orders, fetchOrders } = useOrder();
     const [notif, setNotif] = useState({ isOpen: false, message: '', check: false });
 
     useEffect(() => {
         fetchOrders();
     }, [fetchOrders]);
-    console.log(orders);
+
     // Hàm xử lý Xác nhận (PENDING -> DELIVERING)
     const handleConfirm = async (id) => {
         try {
@@ -86,6 +88,11 @@ function All() {
         }
     };
 
+    const handleRowClick = (order) => {
+        navigate(`/order-management/${order.idOrder}`, { state: { order } });
+        console.log(order);
+    };
+
     return (
         <div>
             <Header />
@@ -112,17 +119,21 @@ function All() {
                                         orders.map((order, index) => (
                                             <tr
                                                 key={order.idOrder}
-                                                className="border-b border-gray-200 hover:bg-gray-50 transition duration-300"
+                                                onClick={() => handleRowClick(order)} // 4. Click vào toàn bộ dòng
+                                                className="border-b border-gray-200 hover:bg-gray-100 transition duration-300 cursor-pointer" // 5. Thêm cursor-pointer
                                             >
-                                                <td className="py-3 px-6 whitespace-nowrap  font-medium">
-                                                    {index + 1}
-                                                </td>
+                                                <td className="py-3 px-6 whitespace-nowrap font-medium">{index + 1}</td>
                                                 <td className="py-3 px-6 text-left text-[16px]">{order.des}</td>
                                                 <td className="py-3 px-6 text-center">{renderStatus(order.status)}</td>
                                                 <td className="py-3 px-6 text-right text-[16px] font-semibold text-blue-600">
                                                     {formatCurrency(order.total_amount)}
                                                 </td>
-                                                <td className="py-3 px-6 text-center text-[16px]">
+                                                <td
+                                                    className="py-3 px-6 text-center"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    {/* 6. QUAN TRỌNG: Dùng stopPropagation để khi bấm nút Xác nhận/Hoàn thành 
+                                không bị nhảy vào trang chi tiết */}
                                                     {renderActionButtons(order)}
                                                 </td>
                                             </tr>

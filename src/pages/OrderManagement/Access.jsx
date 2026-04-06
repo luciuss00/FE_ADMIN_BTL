@@ -5,8 +5,10 @@ import SidebarAdmin from '../../components/Sidebar/SidebarAdmin';
 import Notification from '../../components/Notification';
 import OrderService from '../../services/orderService';
 import { useOrder } from '../../context/OrderContext';
+import { useNavigate } from 'react-router-dom';
 
 function Access() {
+    const navigate = useNavigate();
     const { orders, fetchOrders } = useOrder();
 
     // 1. State quản lý thông báo (Notification)
@@ -27,7 +29,8 @@ function Access() {
     }, [orders]);
 
     // 3. Hàm xử lý gọi API xác nhận giao hàng
-    const handleConfirm = async (id) => {
+    const handleConfirm = async (e, id) => {
+        e.stopPropagation();
         try {
             await OrderService.setDelivering(id); // Gọi API của bạn
 
@@ -67,6 +70,10 @@ function Access() {
         );
     };
 
+    const handleRowClick = (order) => {
+        navigate(`/order-management/${order.idOrder}`, { state: { order } });
+    };
+
     return (
         <div>
             <Header />
@@ -93,7 +100,8 @@ function Access() {
                                         pendingOrders.map((order, index) => (
                                             <tr
                                                 key={order.idOrder}
-                                                className="border-b border-gray-200 hover:bg-gray-50 transition duration-300"
+                                                onClick={() => handleRowClick(order)}
+                                                className="cursor-pointer border-b border-gray-200 hover:bg-gray-100 transition duration-300"
                                             >
                                                 <td className="py-3 px-6 text-left whitespace-nowrap font-medium">
                                                     {index + 1}
@@ -105,7 +113,7 @@ function Access() {
                                                 </td>
                                                 <td className="py-3 px-6 text-center">
                                                     <button
-                                                        onClick={() => handleConfirm(order.idOrder)}
+                                                        onClick={(e) => handleConfirm(e, order.idOrder)}
                                                         className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-[14px] px-4 py-[4px] text-white rounded shadow text-xs font-bold transition active:scale-95"
                                                     >
                                                         Xác nhận

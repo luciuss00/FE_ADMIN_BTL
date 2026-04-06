@@ -71,11 +71,11 @@ function SignIn() {
 
     return (
         <>
-            <div className="bg-red-500 w-full h-[60px]">
-                <h1 className="text-white ml-[150px] text-[26px] pt-2">Shopping Online</h1>
+            <div className="bg-red-500 w-full h-[85px]">
+                <h1 className="text-white ml-[150px] text-[26px] pt-5">Shopping Online</h1>
             </div>
-            <div className="flex justify-center mt-30">
-                <div className="w-[500px] min-h-[400px] bg-white rounded-[5px] shadow-xl border-t-3 border-gray-100 pb-8">
+            <div className="flex justify-center mt-25">
+                <div className="w-[500px] min-h-[380px] bg-white rounded-[5px] shadow-xl border-t-3 border-gray-100 pb-8">
                     <div className="flex items-center justify-between px-[30px] w-[500px] h-[90px]">
                         <div className=" text-[22px] mx-auto">
                             <h2>Đăng nhập</h2>

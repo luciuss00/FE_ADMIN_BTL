@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import HeaderOrder from '../../components/HeaderOrder';
 import SidebarAdmin from '../../components/Sidebar/SidebarAdmin';
@@ -6,6 +7,7 @@ import Notification from '../../components/Notification';
 import { useOrder } from '../../context/OrderContext';
 
 function Finish() {
+    const navigate = useNavigate();
     const { orders, fetchOrders } = useOrder();
 
     // State quản lý thông báo
@@ -30,6 +32,10 @@ function Finish() {
 
     const renderStatus = (status) => {
         return <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">{status}</span>;
+    };
+
+    const handleRowClick = (order) => {
+        navigate(`/order-management/${order.idOrder}`, { state: { order } });
     };
 
     return (
@@ -57,7 +63,8 @@ function Finish() {
                                         completedOrders.map((order, index) => (
                                             <tr
                                                 key={order.idOrder}
-                                                className="border-b border-gray-200 hover:bg-gray-50 transition duration-300"
+                                                onClick={() => handleRowClick(order)}
+                                                className="border-b border-gray-200 hover:bg-gray-100 cursor-pointer transition duration-300"
                                             >
                                                 <td className="py-3 px-6 whitespace-nowrap font-medium">{index + 1}</td>
                                                 <td className="py-3 px-6 text-left text-[16px]">{order.des}</td>

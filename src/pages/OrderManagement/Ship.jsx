@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import HeaderOrder from '../../components/HeaderOrder';
 import SidebarAdmin from '../../components/Sidebar/SidebarAdmin';
@@ -7,9 +8,9 @@ import OrderService from '../../services/orderService'; // Đảm bảo đã imp
 import { useOrder } from '../../context/OrderContext';
 
 function Ship() {
+    const navigate = useNavigate();
     const { orders, fetchOrders } = useOrder();
 
-    // 1. State quản lý thông báo
     const [notif, setNotif] = useState({
         isOpen: false,
         message: '',
@@ -20,26 +21,21 @@ function Ship() {
         fetchOrders();
     }, [fetchOrders]);
 
-    // 2. Lọc đơn hàng đang giao (DELIVERING hoặc SHIPPING)
     const deliveringOrders = useMemo(() => {
         return orders.filter((order) => order.status === 'DELIVERING' || order.status === 'SHIPPING');
     }, [orders]);
 
-    // 3. Hàm xử lý khi nhấn "Xác nhận hoàn thành"
-    const handleFinish = async (id) => {
+    const handleFinish = async (e, id) => {
+        e.stopPropagation();
         try {
-            // Gọi API chuyển trạng thái sang COMPLETED
             await OrderService.setFinishing(id);
 
-            // Hiện thông báo thành công
             setNotif({
                 isOpen: true,
                 message: `Đơn hàng đã giao thành công!`,
                 check: true,
             });
 
-            // Load lại dữ liệu từ Context
-            // Đơn hàng này sẽ tự biến mất khỏi danh sách vì không còn là DELIVERING
             await fetchOrders();
         } catch (error) {
             console.error('Lỗi hoàn thành đơn:', error);
@@ -57,6 +53,10 @@ function Ship() {
 
     const renderStatus = (status) => {
         return <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{status}</span>;
+    };
+
+    const handleRowClick = (order) => {
+        navigate(`/order-management/${order.idOrder}`, { state: { order } });
     };
 
     return (
@@ -85,7 +85,8 @@ function Ship() {
                                         deliveringOrders.map((order, index) => (
                                             <tr
                                                 key={order.idOrder}
-                                                className="border-b border-gray-200 hover:bg-gray-50 transition duration-300"
+                                                onClick={() => handleRowClick(order)}
+                                                className="border-b border-gray-200 hover:bg-gray-100 cursor-pointer transition duration-300"
                                             >
                                                 <td className="py-3 px-6 whitespace-nowrap font-medium">{index + 1}</td>
                                                 <td className="py-3 px-6 text-left text-[16px]">{order.des}</td>
@@ -95,7 +96,7 @@ function Ship() {
                                                 </td>
                                                 <td className="py-3 px-6 text-center">
                                                     <button
-                                                        onClick={() => handleFinish(order.idOrder)}
+                                                        onClick={(e) => handleFinish(e, order.idOrder)}
                                                         className="bg-green-500 hover:bg-green-600 cursor-pointer text-[14px] px-4 py-[4px] text-white rounded shadow text-xs font-bold transition active:scale-95"
                                                     >
                                                         Hoàn thành

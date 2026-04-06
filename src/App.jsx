@@ -18,6 +18,7 @@ import Access from './pages/OrderManagement/Access';
 import Cancel from './pages/OrderManagement/Cancel';
 import Finish from './pages/OrderManagement/Finish';
 import Ship from './pages/OrderManagement/Ship';
+import OrderDetail from './pages/OrderDetail';
 
 import { UserProvider } from './context/UserContext';
 import { ProductProvider } from './context/ProductContext';
@@ -48,6 +49,7 @@ function App() {
                                     <Route path="/order-management/ship" element={<Ship />} />
                                     <Route path="/order-management/finish" element={<Finish />} />
                                     <Route path="/order-management/cancel" element={<Cancel />} />
+                                    <Route path="/order-management/:id" element={<OrderDetail />} />
                                 </Route>
 
                                 <Route path="/signin" element={<SignIn />} />

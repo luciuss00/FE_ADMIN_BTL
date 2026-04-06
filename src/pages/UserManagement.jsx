@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom'; // 1. Thêm import Link
-import { Trash2, UserPlus, Mail, User as UserIcon } from 'lucide-react';
+import { User as UserIcon } from 'lucide-react';
 import Header from '../components/Header';
 import SidebarAdmin from '../components/Sidebar/SidebarAdmin';
 import { useUser } from '../context/UserContext';
@@ -11,6 +11,15 @@ const UserManagement = () => {
     useEffect(() => {
         fetchUsers();
     }, [fetchUsers]);
+
+    const currentUser = JSON.parse(localStorage.getItem('user'));
+
+    const filteredUsers = useMemo(() => {
+        if (!users) return [];
+        if (!currentUser || !currentUser.email) return users;
+
+        return users.filter((user) => user.email !== currentUser.email);
+    }, [users, currentUser]);
 
     return (
         <div className="bg-gray-50 min-h-screen">
@@ -37,8 +46,8 @@ const UserManagement = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
-                                    {users && users.length > 0 ? (
-                                        users.map((user) => {
+                                    {filteredUsers && filteredUsers.length > 0 ? (
+                                        filteredUsers.map((user) => {
                                             return (
                                                 <tr
                                                     key={user.idUser || user.id}
@@ -80,7 +89,7 @@ const UserManagement = () => {
                                                         >
                                                             <span
                                                                 className={`px-3 py-1 rounded-full text-xs font-bold border ${
-                                                                    user.sex === 'Nam   '
+                                                                    user.sex === 'Nam'
                                                                         ? 'bg-blue-50 text-blue-600 border-blue-100'
                                                                         : 'bg-pink-50 text-pink-600 border-pink-100'
                                                                 }`}
