@@ -51,7 +51,7 @@ function Home() {
                                 <StatCard title="Sản phẩm" value={products.length} color="bg-red-500" />
                             </Link>
                             <Link to="/user-management">
-                                <StatCard title="Người dùng " value={users.length} color="bg-blue-500" />
+                                <StatCard title="Người dùng " value={users.length - 1} color="bg-blue-500" />
                             </Link>
                             <StatCard
                                 title="Doanh thu"
