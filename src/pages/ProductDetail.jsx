@@ -11,6 +11,7 @@ function ProductDetail() {
     const navigate = useNavigate();
     const product = location.state;
     const { deleteProductFromState } = useProducts();
+    console.log(product);
 
     const [isExpanded, setIsExpanded] = useState(false);
     const [undoTimer, setUndoTimer] = useState(null); // Lưu ref của bộ đếm 5s
@@ -126,7 +127,7 @@ function ProductDetail() {
                             <div className="mt-4 text-[14px]">
                                 <p className="text-gray-500 font-medium">Mô tả: </p>
                                 <div className={`text-gray-700 mt-1 ${!isExpanded ? 'line-clamp-3' : ''}`}>
-                                    {product.description || 'Không có mô tả.'}
+                                    {product.description}
                                 </div>
                                 <button
                                     onClick={() => setIsExpanded(!isExpanded)}
@@ -151,6 +152,7 @@ function ProductDetail() {
                             </p>
 
                             {/* Nút bấm */}
+
                             <div className="flex gap-4 mt-10">
                                 <button
                                     onClick={handleDelete}
