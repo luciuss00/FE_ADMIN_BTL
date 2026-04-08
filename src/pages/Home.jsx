@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import { useProducts } from '../context/ProductContext';
 import { useUser } from '../context/UserContext';
 import { useOrder } from '../context/OrderContext';
+import ChatBox from '../ChatBox';
 
 import HomeService from '../services/homeService'; // Import service của bạn
 import {
@@ -74,7 +75,7 @@ function Home() {
             <Header />
             <div className="flex">
                 <SidebarAdmin />
-
+                <ChatBox senderRole="admin" />
                 <main className="flex-1 p-8">
                     <div className="max-w-7xl mx-auto">
                         <header className="mb-8">

@@ -29,6 +29,11 @@ const ProductService = {
             params: { id: id },
         });
     },
+
+    discountProduct() {
+        const url = '/admin/smart-discount';
+        return apiClient.post(url);
+    },
 };
 
 export default ProductService;

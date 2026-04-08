@@ -9,6 +9,7 @@ export const ProductProvider = ({ children }) => {
     const fetchProductsOnce = async () => {
         if (isLoaded) return;
         try {
+            await ProductService.discountProduct();
             const response = await ProductService.getAllProduct();
             setProducts(response.data);
             setIsLoaded(true);
